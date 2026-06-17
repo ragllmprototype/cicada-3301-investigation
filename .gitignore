@@ -8,8 +8,5 @@ _archive_krisyotam/
 # Python venv
 .venv/
 
-# GnuPG runtime files (keep only exported .asc public keys)
-pgp/keyring/*.gpg~
-pgp/keyring/.#*
-pgp/keyring/S.*
-pgp/keyring/private-keys-v1.d/
+# GnuPG runtime keyring (regenerate with: gpg --homedir pgp/keyring --import pgp/*.asc)
+pgp/keyring/
