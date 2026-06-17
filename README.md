@@ -1,16 +1,16 @@
 # cicada-3301-investigation
 
-A falsification-first forensic investigation of Cicada 3301.
+A forensic investigation of Cicada 3301 — built on *what Cicada actually signed*, not what archives claim it said.
 
-## Overview
+## The question
 
-This project tests a specific claim: **that Wei Dai (b-money author, Crypto++ maintainer, Satoshi correspondent) architected Cicada 3301** as a continuation of cypherpunk work after Satoshi Nakamoto's April 2011 disappearance.
+**Was Cicada 3301 a continuation of Satoshi Nakamoto's cypherpunk mission after his April 2011 disappearance?**
 
-**Key Finding:** I did not solve Cicada 3301. But I authenticated what Cicada actually said, caught hoaxes that have circulated for years, recovered a corrupted message, and tested the hypothesis against real data instead of vibes.
+Eight and a half months after Satoshi went silent ("I've moved on to other things"), Cicada 3301 appeared — same ideology, same obsession with cryptography, recruiting "highly intelligent individuals." This project asks whether that's continuation, or a vacuum filled by someone who understood Satoshi's mission perfectly.
 
-**Result:** The hypothesis is **weakened, not supported.** When the evidence finally became discriminating, it pointed *away* from Wei Dai. Honest posterior: **~2% → ~1%.** Wei Dai cannot be ruled out entirely, but nothing here is positive evidence *for* him — and the one identifying signal (British spelling) excludes him as a natural author.
+**Honest answer:** the evidence **suggests yes, but does not prove it.** What this investigation *does* deliver is the thing 14 years of speculation never built — a clean, authenticated, falsifiable foundation.
 
-> Method note: this investigation scores each fact by **likelihood ratio** — does it occur more under the hypothesis than under chance? Facts merely *consistent* with the hypothesis (a fitting timeline, shared ideology) have LR ≈ 1 and are **not** treated as evidence. See [`docs/03_METHODOLOGY.md`](docs/03_METHODOLOGY.md).
+**What I did not do:** solve the puzzle, crack the Liber Primus, or name the architects. **What I did:** authenticate 21 messages cryptographically (with Claude Code's help), catch a hoax that fooled thousands of researchers, recover a corrupted message, and measure stylistic markers against real candidate data. The single firmest result: **the stylometry rules out Wei Dai writing naturally.**
 
 ---
 
@@ -27,7 +27,7 @@ gpg --verify corpus/verified/2012-01-key-announcement.asc
 # => Good signature from "Cicada 3301 (845145127)"
 #    using RSA key 181F01E57A35090F   (genuine key)
 
-# The decoy: this fake key does NOT match the corpus signatures
+# The decoy: the fake key from the popular archive does NOT match
 gpg --show-keys corpus/quarantine-hoax/HOAX_aadishgoel_decoykey.asc
 # => fingerprint CEBB2647…7B4ADD02  (RSA-3072, created+revoked 2016) — NOT the real key
 ```
@@ -40,10 +40,10 @@ Genuine fingerprint: `6D854CD7 9333 22A6 01C3 286D 181F 01E5 7A35 090F`
 
 | File | Contents |
 |---|---|
-| [`docs/00_REPORT.md`](docs/00_REPORT.md) | Full report (start here) |
+| [`docs/00_REPORT.md`](docs/00_REPORT.md) | Full report |
 | [`docs/01_AUTHENTICATION.md`](docs/01_AUTHENTICATION.md) | Root of trust; how the hoax key was caught |
-| [`docs/02_PGP_FORENSICS.md`](docs/02_PGP_FORENSICS.md) | Key-packet analysis (and why PGP has zero attribution value) |
-| [`docs/03_METHODOLOGY.md`](docs/03_METHODOLOGY.md) | Falsification-first frame, priors, likelihood ratios |
+| [`docs/02_PGP_FORENSICS.md`](docs/02_PGP_FORENSICS.md) | Key-packet analysis (why PGP authenticates but doesn't attribute) |
+| [`docs/03_METHODOLOGY.md`](docs/03_METHODOLOGY.md) | Authentication process, priors, how evidence is weighed |
 | [`docs/04_VERIFIED_CORPUS.md`](docs/04_VERIFIED_CORPUS.md) | All 21 verified messages + recovery of the corrupted one |
 | [`docs/05_STYLISTIC_MARKERS.md`](docs/05_STYLISTIC_MARKERS.md) | Marker catalog with sample-size limits |
 | [`docs/06_STYLOMETRY.md`](docs/06_STYLOMETRY.md) | Controlled comparison vs candidate authors |
@@ -51,64 +51,77 @@ Genuine fingerprint: `6D854CD7 9333 22A6 01C3 286D 181F 01E5 7A35 090F`
 
 ---
 
-## The candidate pool (context)
+## Timeline
 
-Before disappearing, Satoshi corresponded with a small set of cypherpunks. The plausible-architect pool used here:
+```
+Oct 2008      Satoshi announces Bitcoin to the cypherpunk mailing list
+Jan 2009      Genesis block; Hal Finney receives the first transaction
+2009–2011     Satoshi actively develops Bitcoin
+Apr 23, 2011  Satoshi's final email: "I've moved on to other things."
+Apr 2011+     Complete silence
+Jan 4, 2012   Cicada 3301 appears — 8.5 months later
+```
 
-1. **Adam Back** (UK) — Hashcash creator
-2. **Wei Dai** (US) — b-money creator; the subject of the hypothesis under test
-3. **Nick Szabo** (US) — Bit Gold / Shelling Out
-4. **Hal Finney** (US, 1956–2014) — Bitcoin's first collaborator
+Before vanishing, Satoshi personally contacted three people:
+- **Adam Back** (UK, b. 1970) — Hashcash creator
+- **Wei Dai** (US, b. 1976) — b-money creator
+- **Hal Finney** (US, 1956–2014) — Bitcoin's first collaborator
+
+(Nick Szabo, Bit Gold, is included as an additional control.)
 
 ---
 
 ## Findings
 
 ### Authentication
-- **21/21** messages verify as a good signature from the genuine key `6D854CD7…7A35090F`.
-- **Hoax detected:** a popular GitHub archive's "PGP key" is a 2016 decoy (RSA-3072, created *and revoked* the same day) whose UID display name was spoofed to the literal string `7A35090F` to fool short-ID lookups.
-- **Corrupted message recovered:** the 2013 *Liber AL vel Legis* (Crowley) book-code message had been re-archived with its opening line (`"Welcome again."`) dropped, breaking the signature; a clean GOOD-verifying copy was recovered from a second archive.
+- **21/21** messages verify as a good signature from the genuine key `6D854CD7…7A35090F` (20 verified directly; 1 recovered — see below).
+- **Hoax caught:** the most-cloned Cicada archive on GitHub embeds a **fake key** — a 2016 decoy (RSA-3072, created *and revoked* the same day) whose UID display name was spoofed to the real key's short ID `7A35090F` to fool anyone matching on the short ID. Reading the *full* fingerprint exposed it. Quarantined.
+- **Corrupted message recovered:** the 2013 message pointing to Crowley's *Liber AL vel Legis* had a **genuine signature but a missing first line** (`"Welcome again."`) → BADSIG. A clean GOOD-verifying copy was recovered from a second archive.
 
-### Stylometry (the two markers that actually discriminate)
-- **Double-spacing:** Cicada **100%** (14/14 same-line sentence breaks use two spaces). Wei Dai **0%** (0/1,358 words in b-money). Adam Back ~8%.
-- **Spelling:** Cicada **British** (`organisations`). Wei Dai **American** (`synchronize`, `favor`; zero British forms). Szabo American. Adam Back **British** (`optimised`, `behaviour`).
+### Stylometry — reading all 21 together
+- **Not one author.** The messages don't read as a single voice — yet the *style* is rigidly consistent across five years, suggesting an enforced operational standard rather than one person.
+- **Double-spacing:** every sentence is followed by two spaces — Cicada **100%** (14/14). A typewriter-era habit, deliberately used in 2012–2017 long after it died. A fingerprint, whether ingrained habit or enforced discipline.
+- **British spelling:** in the one off-script moment (the 2015 denial) they wrote "**organisations**" — British. Faking a national spelling to hide identity would be odd, which makes it notable either way.
+- **Esoteric tone:** Crowley, "enlightenment," "transcendence," "a private man who wished to transcend." Occult/Western-mystical, not the language of someone optimizing for cryptographic efficiency.
 
 ### Candidate testing
-| Candidate | Double-spacing | British spelling | Verdict |
-|---|---|---|---|
-| **Wei Dai** | 0% | No (American) | **contradicts both markers** |
-| Adam Back | ~8% | **Yes** | spelling matches; spacing matches no one |
-| Nick Szabo | n/a (rendered) | No (American) | disfavored |
-| Hal Finney | n/a | insufficient text | untestable |
+| Candidate | Double-spacing | Spelling | Tone | Verdict |
+|---|---|---|---|---|
+| **Wei Dai** | 0% | American only | rationalist | **ruled out** (natural author) |
+| Adam Back | ~8% (one slip) | **British** | technical | **possible** — spelling matches, rest doesn't |
+| Nick Szabo | n/a | American | — | ruled out |
+| Hal Finney | n/a | insufficient | — | untestable (d. 2014) |
 
-The lone identifying signal (British spelling) is **exclusionary against Wei Dai** and, if it leans anywhere, leans toward the pool's only Brit (Back). It is *not* an identification — British spelling is shared by billions and could be deliberate obfuscation.
+**The writer is: NOT Wei Dai · MIGHT be Adam Back · NOT Szabo · or someone outside the documented circle entirely.** Double-spacing + esoteric tone point to a cypherpunk insider, but probably not one of the headline names — which leaves: an undocumented collaborator, one person adapting two styles to hide, or a group with one style-enforcer.
 
 ---
 
-## Consistency is not evidence
+## Consistent with continuation — but not proof
 
-Arguments often cited *for* a "Satoshi-circle continuation" — an 8.5-month gap before Cicada launched, shared cypherpunk ideology, cryptographic skill, the "From here on out" phrasing — are all **consistent with** the hypothesis but equally expected under chance (LR ≈ 1). They are context, not proof, and are deliberately **not** counted as evidence here. No positive, discriminating evidence for any specific architect was found.
+For the broad question (Satoshi-circle continuation vs. an unrelated group), several things line up:
+- **Timeline:** 8.5-month gap reads as a planning window.
+- **Ideology:** identical cypherpunk philosophy.
+- **Skillset:** cryptographic sophistication + operational-security discipline.
+- **Deliberate obfuscation:** British spelling, double-spacing, mystical tone all look like chosen masks.
+
+These are **consistent with** continuation and tilt the odds toward an insider rather than random outsiders — but they are not proof, and none of them name a person. The firm, falsifiable result remains the *negative* one: **it was not Wei Dai writing naturally.**
 
 ## What remains unknown
 - The actual identity of Cicada's architects
-- What became of the individuals who completed the puzzles
-- The purpose of the recruitment
+- What became of the people who completed the puzzles
+- The real purpose of the recruitment
 - Whether the operation is still active (the key signed messages as late as 2017)
 
 ---
 
 ## For future researchers
 
-This repo is a clean, authenticated foundation: 21 verified messages, the genuine key, quarantined hoaxes, and candidate corpora — so new hypotheses can be tested against *what Cicada actually signed* rather than what archives claim it said.
+A clean, authenticated foundation: 21 verified messages, the genuine key, quarantined hoaxes, and candidate corpora — so new hypotheses can be tested against *what Cicada actually signed*, candidates compared, and work shared instead of theorized in isolation.
 
-## The question
-
-**Was Cicada 3301 Wei Dai, or a Satoshi-circle continuation?**
-
-The honest answer from this investigation: **unproven, and the only discriminating evidence points away from Wei Dai.** That distinction — between "consistent with" and "evidence for" — is the entire point.
+**Was 3301 a continuation of Satoshi's cypherpunk mission?** The evidence suggests yes; it doesn't prove it. Maybe that's what a 14-year-old mystery deserves — not a confident answer, but a cleaner way to ask the question.
 
 ---
 
 ## License & attribution
 
-Investigation by Cooldash. Authenticated Cicada 3301 messages are public domain. Analysis and methodology are open for independent verification and extension. Verify everything — `GNUPGHOME` and the genuine key are included.
+Investigation by Cooldash, with cryptographic verification assisted by Claude Code. Authenticated Cicada 3301 messages are public domain. Analysis and methodology are open for independent verification and extension.
